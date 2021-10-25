@@ -25,9 +25,9 @@ func (self *ModelViewSet) List(c *gin.Context) {
 	ordering := Ordering(c, self.OrderingFields)
 
 	if self.DisplayFields != nil && len(self.DisplayFields) > 0 {
-		err = self.QuerySet.Model(self.Serializer).Select(self.DisplayFields).Where(filterMap).Count(&count).Limit(size).Offset(page).Order(ordering).Find(results).Error
+		err = self.QuerySet.Model(self.Serializer).Session(&gorm.Session{NewDB: true}).Select(self.DisplayFields).Where(filterMap).Count(&count).Limit(size).Offset(page).Order(ordering).Find(results).Error
 	} else {
-		err = self.QuerySet.Model(self.Serializer).Where(filterMap).Count(&count).Limit(size).Offset(page).Order(ordering).Find(results).Error
+		err = self.QuerySet.Model(self.Serializer).Session(&gorm.Session{NewDB: true}).Where(filterMap).Count(&count).Limit(size).Offset(page).Order(ordering).Find(results).Error
 	}
 
 	if err != nil {
@@ -46,9 +46,9 @@ func (self *ModelViewSet) Retrieve(c *gin.Context) {
 	id := c.Param("id")
 
 	if self.DisplayFields != nil && len(self.DisplayFields) > 0 {
-		err = self.QuerySet.Model(self.Serializer).Select(self.DisplayFields).First(result, id).Error
+		err = self.QuerySet.Model(self.Serializer).Session(&gorm.Session{NewDB: true}).Select(self.DisplayFields).First(result, id).Error
 	} else {
-		err = self.QuerySet.Model(self.Serializer).First(result, id).Error
+		err = self.QuerySet.Model(self.Serializer).Session(&gorm.Session{NewDB: true}).First(result, id).Error
 	}
 
 	if err != nil {
@@ -57,7 +57,6 @@ func (self *ModelViewSet) Retrieve(c *gin.Context) {
 	}
 
 	SuccessData(c, result)
-	return
 }
 
 func (self *ModelViewSet) Put(c *gin.Context) {
@@ -69,13 +68,12 @@ func (self *ModelViewSet) Put(c *gin.Context) {
 		ErrorData(c, err)
 		return
 	}
-	if err := self.QuerySet.Model(self.Serializer).Where("id = ?", id).Save(result).Error; err != nil {
+	if err := self.QuerySet.Model(self.Serializer).Session(&gorm.Session{NewDB: true}).Where("id = ?", id).Save(result).Error; err != nil {
 		ErrorData(c, err)
 		return
 	}
 
 	SuccessData(c, result)
-	return
 }
 
 func (self *ModelViewSet) Delete(c *gin.Context) {
@@ -86,9 +84,9 @@ func (self *ModelViewSet) Delete(c *gin.Context) {
 
 	id := c.Param("id")
 	if self.Unscoped {
-		err = self.QuerySet.Model(self.Serializer).First(result, id).Unscoped().Delete(result).Error
+		err = self.QuerySet.Model(self.Serializer).Session(&gorm.Session{NewDB: true}).First(result, id).Unscoped().Delete(result).Error
 	} else {
-		err = self.QuerySet.Model(self.Serializer).First(result, id).Delete(result).Error
+		err = self.QuerySet.Model(self.Serializer).Session(&gorm.Session{NewDB: true}).First(result, id).Delete(result).Error
 	}
 
 	if err != nil {
@@ -97,7 +95,6 @@ func (self *ModelViewSet) Delete(c *gin.Context) {
 	}
 
 	Success(c)
-	return
 }
 
 func (self *ModelViewSet) Create(c *gin.Context) {
@@ -109,7 +106,7 @@ func (self *ModelViewSet) Create(c *gin.Context) {
 		return
 	}
 
-	if err := self.QuerySet.Model(self.Serializer).Create(result).Error; err != nil {
+	if err := self.QuerySet.Model(self.Serializer).Session(&gorm.Session{NewDB: true}).Create(result).Error; err != nil {
 		ErrorData(c, err)
 		return
 	}
