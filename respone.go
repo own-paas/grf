@@ -1,4 +1,4 @@
-package drf
+package grf
 
 import (
 	"github.com/gin-gonic/gin"
@@ -9,7 +9,7 @@ import (
 func Success(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"code": 0,
-		"data": []string{},
+		"message": "操作成功！",
 	})
 }
 
@@ -24,7 +24,7 @@ func SuccessData(c *gin.Context, data interface{}) {
 func Error(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"code":    -1,
-		"message": "操作失败",
+		"message": "操作失败！",
 	})
 }
 

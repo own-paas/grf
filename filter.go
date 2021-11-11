@@ -1,4 +1,4 @@
-package drf
+package grf
 
 import (
 	"github.com/gin-gonic/gin"

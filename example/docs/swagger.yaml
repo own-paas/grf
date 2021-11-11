@@ -1,0 +1,144 @@
+definitions:
+  model.User:
+    properties:
+      created_at:
+        description: 创建时间
+        type: string
+      email:
+        description: 邮箱
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      name:
+        description: 用户名
+        type: string
+      password:
+        description: 密码
+        type: string
+      phone:
+        description: 电话号码
+        type: string
+      updated_at:
+        description: 创建时间
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /v1/user/:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 分页页面
+        in: query
+        name: page
+        type: integer
+      - description: 分页大小
+        in: query
+        name: size
+        type: integer
+      - description: 排序
+        in: query
+        name: order
+        type: string
+      - description: 搜索
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 0, "data": {"count": 0, "results": []}}'
+          schema:
+            type: object
+      summary: 用户列表
+      tags:
+      - 用户管理
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 传入参数是struct
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 0, "message": "操作成功！"}'
+          schema:
+            type: object
+      summary: 添加用户
+      tags:
+      - 用户管理
+  /v1/user/{id}/:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 0, "message": "操作成功！"}'
+          schema:
+            type: object
+      summary: 删除用户
+      tags:
+      - 用户管理
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 0, "data":{}}'
+          schema:
+            type: object
+      summary: 查看用户
+      tags:
+      - 用户管理
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 传入参数是struct
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 0, "message": "操作成功！"}'
+          schema:
+            type: object
+      summary: 修改用户
+      tags:
+      - 用户管理
+swagger: "2.0"
