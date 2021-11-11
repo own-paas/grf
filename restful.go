@@ -114,7 +114,7 @@ func (self *ModelViewSet) Update(c *gin.Context) {
 
 	var err error
 	id := c.Param("id")
-	result := map[string]interface{}{}
+	result := reflect.New(reflect.TypeOf(self.Serializer).Elem()).Interface()
 
 	tx := self.getQuerySet()
 
@@ -123,7 +123,7 @@ func (self *ModelViewSet) Update(c *gin.Context) {
 		return
 	}
 
-	if err = tx.Where("id = ?", id).Updates(result).Error; err != nil {
+	if err = tx.Where("id = ?", id).Save(result).Error; err != nil {
 		ErrorData(c, err)
 		return
 	}

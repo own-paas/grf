@@ -9,6 +9,7 @@ import (
 func Success(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"code": 0,
+		"data": []string{},
 		"message": "操作成功！",
 	})
 }
