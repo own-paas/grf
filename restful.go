@@ -14,6 +14,8 @@ type ModelViewSet struct {
 	FilterFields   []string
 	SearchFields   []string
 	OrderingFields []string
+	ResultType     string
+	Cascade        bool
 	Preload        string
 	Unscoped       bool
 }
@@ -25,8 +27,16 @@ func (self *ModelViewSet) getQuerySet() *gorm.DB {
 func (self *ModelViewSet) List(c *gin.Context) {
 	catchException(c)
 
-	var err error
-	results := reflect.New(reflect.SliceOf(reflect.TypeOf(self.Serializer))).Interface()
+	var (
+		err error
+		results interface{}
+	)
+
+	if self.ResultType == "map" {
+		results = &[]map[string]interface{}{}
+	} else {
+		results = reflect.New(reflect.SliceOf(reflect.TypeOf(self.Serializer))).Interface()
+	}
 
 	page, size, count := Pagination(c)
 	filterMap := Filter(c, self.FilterFields)
@@ -39,7 +49,9 @@ func (self *ModelViewSet) List(c *gin.Context) {
 		tx.Preload(self.Preload)
 	}
 
-	tx.Preload(clause.Associations)
+	if self.Cascade {
+		tx.Preload(clause.Associations)
+	}
 
 	if self.DisplayFields != nil && len(self.DisplayFields) > 0 {
 		tx.Select(self.DisplayFields)
@@ -50,8 +62,14 @@ func (self *ModelViewSet) List(c *gin.Context) {
 	}
 
 	if searchMap != nil && len(searchMap) > 0 {
-		for k, v := range searchMap {
-			tx.Or(k, v)
+		if len(searchMap) == 1 {
+			for k, v := range searchMap {
+				tx.Where(k, v)
+			}
+		} else {
+			for k, v := range searchMap {
+				tx.Or(k, v)
+			}
 		}
 	}
 
@@ -77,7 +95,14 @@ func (self *ModelViewSet) Retrieve(c *gin.Context) {
 	catchException(c)
 
 	var err error
-	result := reflect.New(reflect.TypeOf(self.Serializer).Elem()).Interface()
+	var result interface{}
+
+	if self.ResultType == "map" {
+		result = &map[string]interface{}{}
+	} else {
+		result = reflect.New(reflect.TypeOf(self.Serializer).Elem()).Interface()
+	}
+
 	id := c.Param("id")
 
 	tx := self.getQuerySet()
@@ -86,7 +111,9 @@ func (self *ModelViewSet) Retrieve(c *gin.Context) {
 		tx.Preload(self.Preload)
 	}
 
-	tx.Preload(clause.Associations)
+	if self.Cascade {
+		tx.Preload(clause.Associations)
+	}
 
 	if self.DisplayFields != nil && len(self.DisplayFields) > 0 {
 		tx.Select(self.DisplayFields)

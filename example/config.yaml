@@ -1,6 +1,6 @@
 db:
   driver: mysql
-  dsn: root:@(127.0.0.1)/example?charset=utf8&parseTime=True&loc=Local
+  dsn: example:example@(127.0.0.1)/example?charset=utf8&parseTime=True&loc=Local
 
 http:
   ssl: false

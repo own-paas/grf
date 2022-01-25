@@ -18,7 +18,7 @@ func UserView() user {
 			Serializer:     &model.User{},
 			FilterFields:   []string{"name", "phone", "email"},
 			SearchFields:   []string{"name", "phone"},
-			DisplayFields:  []string{"id", "name", "password", "phone", "email"},
+			DisplayFields:  []string{"id", "name", "phone", "email"},
 			OrderingFields: []string{"id"},
 			Unscoped:       true,
 		},
