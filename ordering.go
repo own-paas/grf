@@ -21,7 +21,7 @@ func Ordering(c *gin.Context, ordering_fields []string) string {
 				order = order + ", "
 			}
 			if strings.HasPrefix(o, "-") {
-				tmp := strings.Split(order, "-")
+				tmp := strings.Split(o, "-")
 				if len(tmp) == 2 {
 					order = order + tmp[1] + " desc"
 				}
