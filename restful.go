@@ -1,10 +1,11 @@
 package grf
 
 import (
+	"reflect"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"reflect"
 )
 
 type ModelViewSet struct {
@@ -28,7 +29,7 @@ func (self *ModelViewSet) List(c *gin.Context) {
 	catchException(c)
 
 	var (
-		err error
+		err     error
 		results interface{}
 	)
 
@@ -67,9 +68,14 @@ func (self *ModelViewSet) List(c *gin.Context) {
 				tx.Where(k, v)
 			}
 		} else {
+			var exprs []clause.Expression
 			for k, v := range searchMap {
-				tx.Or(k, v)
+				exprs = append(exprs, clause.Expr{
+					SQL:  k,
+					Vars: []interface{}{v},
+				})
 			}
+			tx.Where(clause.Or(exprs...))
 		}
 	}
 
