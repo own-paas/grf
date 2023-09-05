@@ -198,5 +198,5 @@ func (self *ModelViewSet) Create(c *gin.Context) {
 		return
 	}
 
-	Success(c)
+	SuccessData(c, result)
 }
